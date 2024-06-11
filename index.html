@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Signal Control</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Traffic Signal Control</h1>
+    <p>Pedestrian Count: <span id="pedestrian-count">0</span></p>
+    <p>Vehicle Count: <span id="vehicle-count">0</span></p>
+    <p>Red Light Duration: <span id="red-light-duration">10</span> seconds</p>
+    <button id="increase-duration">Increase Duration by 10s</button>
+
+    <script>
+        function updateData() {
+            $.getJSON('/data', function(data) {
+                $('#pedestrian-count').text(data.pedestrian_count);
+                $('#vehicle-count').text(data.vehicle_count);
+                $('#red-light-duration').text(data.red_light_duration);
+            });
+        }
+
+        $(document).ready(function() {
+            updateData();
+            setInterval(updateData, 1000);
+
+            $('#increase-duration').click(function() {
+                $.post('/increase_duration', function(response) {
+                    if (response.success) {
+                        updateData();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
